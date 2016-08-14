@@ -8,6 +8,7 @@ what is expected.
 """
 import os
 import types
+import six
 
 def flatten(array):
     if not array:
@@ -16,7 +17,9 @@ def flatten(array):
     result = []
     for x in array:
         if isinstance(x, types.ListType):
-            result += flatten(x)
+            l = flatten(x)
+            if l:
+                result += l
         else:
             result.append(x)
     return result
@@ -47,7 +50,7 @@ class ThisIsWhereYouCode():
         """
         if array:
             array = filter(
-                lambda s: isinstance(s, unicode), 
+                lambda s: isinstance(s, six.string_types), 
                 flatten(array))
             return max(array, key=len) if array else None
         return None
