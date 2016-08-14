@@ -36,7 +36,14 @@ class ThisIsWhereYouCode():
         without the period otherwise
         """
         try:
-            return os.path.splitext(filename)[1][1:] or None
+            file, ext = os.path.splitext(filename)
+            if not ext:
+                if file.startswith("."):
+                    return file[1:]
+                else:
+                    return None
+            else:
+                return ext[1:]
         except AttributeError:
             return None
 
