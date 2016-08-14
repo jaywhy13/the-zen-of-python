@@ -6,6 +6,20 @@ what is expected.
 @see: tester.Tester
 @author: ataillefer@nuxeo.com
 """
+import os
+import types
+
+def flatten(array):
+    if not array:
+        return None
+
+    result = []
+    for x in array:
+        if isinstance(x, types.ListType):
+            result += flatten(x)
+        else:
+            result.append(x)
+    return result
 
 
 class ThisIsWhereYouCode():
@@ -18,8 +32,11 @@ class ThisIsWhereYouCode():
         :return: None if the input is None or has no extension and the extension
         without the period otherwise
         """
-        # TODO: Implement me!
-        return None
+        try:
+            return os.path.splitext(filename)[1][1:] or None
+        except AttributeError:
+            return None
+
 
     def get_longest_string(self, array):
         """Return the longest string contained in the input array.
@@ -28,8 +45,14 @@ class ThisIsWhereYouCode():
 
         :return: None if the input is None and the longest string otherwise
         """
-        # TODO: Implement me!
+        if array:
+            array = filter(
+                lambda s: isinstance(s, unicode), 
+                flatten(array))
+            return max(array, key=len) if array else None
         return None
+
+
 
     def are_arrays_equal(self, array1, array2):
         """Return True if both arrays contain the same values in the same order.
@@ -37,8 +60,20 @@ class ThisIsWhereYouCode():
         :return: True if both arrays contain the same values in the same order
         and False otherwise
         """
-        # TODO: Implement me!
-        return False
+        if array1 is None and array2 is None:
+            return True
+        if array1 is None and array2 is not None:
+            return False
+        if array2 is None and array1 is not None:
+            return False
+        if len(array1) != len(array2):
+            return False
+        if array1 == [] and array2 == []:
+            return True
+        for x, y in zip(array1, array2):
+            if x != y:
+                return False
+        return True
 
     def get_compressed_string(self, input_):
         """Compress the input string with a very dummy algorithm.
@@ -50,8 +85,28 @@ class ThisIsWhereYouCode():
         :param input_: the input string that can only contain letters
         :return: None if the input is None and the compressed string otherwise
         """
-        # TODO: Implement me!
-        return None
+        if not input_:
+            return None
+        buffer = []
+        result = ""
+        for letter in input_:
+            if letter in buffer:
+                buffer.append(letter)
+            else:
+                if buffer:
+                    n = len(buffer)
+                    last_letter = buffer[0]
+                    result += "%s%s" % (n, last_letter) if n > 1 else last_letter
+                    buffer = [letter]
+                else:
+                    buffer.append(letter)
+        if buffer:
+            n = len(buffer)
+            letter = buffer[0]
+            result += "%s%s" % (n, letter) if n > 1 else letter
+        return result
+
+
 
     def get_sorted_array(self, array):
         """Sort the input array of strings.
@@ -61,5 +116,7 @@ class ThisIsWhereYouCode():
 
         :return: None if the input is None and the sorted array otherwise
         """
-        # TODO: Implement me!
-        return None
+        if not array:
+            return None
+        return sorted(array, key=self.get_compressed_string)
+
